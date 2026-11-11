@@ -32,21 +32,24 @@
 
   /* ---------- plumbing: one shared loop, scenes only run while on screen ---------- */
   const live=[],ptr={x:0,y:0,tx:0,ty:0};let raf=0,last=0,clock=fz?+fz[1]:0;
+  let frames=0,spent=0; // frame-rate guard: a phone that can't hold ~25fps gets the CSS versions instead
   function loop(now){
-    const dt=Math.min(.05,Math.max(0,(now-last)/1000));last=now;
+    const raw=Math.max(0,(now-last)/1000),dt=Math.min(.05,raw);last=now;
     if(!fz)clock+=dt;
     ptr.x+=(ptr.tx-ptr.x)*.06;ptr.y+=(ptr.ty-ptr.y)*.06;
     let any=false;
     for(const s of live)if(s.vis&&s.ready){any=true;s.step(dt);s.R.render(s.scene,s.cam);}
+    if(any&&!fz&&frames<80&&raw<.5&&++frames>20){spent+=raw;if(frames===80&&spent/60>.04){live.splice(0).forEach(s=>s.drop());any=false;}} // skip warm-up frames (shader compile)
     raf=any&&!document.hidden?requestAnimationFrame(loop):0;
   }
   const kick=()=>{if(!raf){last=performance.now();raf=requestAnimationFrame(loop);}};
   function attach(s,host){
     live.push(s);
-    new ResizeObserver(()=>{if(host.clientWidth){s.size(host.clientWidth);kick();}}).observe(host);
-    new IntersectionObserver(e=>{s.vis=e[0].isIntersecting;kick();}).observe(host);
+    const fit=()=>{if(host.clientWidth){s.size(host.clientWidth);kick();}};
+    if(window.ResizeObserver)new ResizeObserver(fit).observe(host);else addEventListener('resize',fit);
+    new IntersectionObserver(e=>{s.vis=e[0].isIntersecting;if(!window.ResizeObserver)fit();kick();}).observe(host); // no ResizeObserver: size once the page is shown
   }
-  const renderer=canvas=>{let R;try{R=new T.WebGLRenderer({canvas,alpha:true,antialias:true});}catch(e){return null;}
+  const renderer=canvas=>{let R;try{R=new T.WebGLRenderer({canvas,alpha:true,antialias:true,failIfMajorPerformanceCaveat:true});}catch(e){return null;}
     R.setPixelRatio(Math.min(devicePixelRatio||1,2));R.outputEncoding=T.sRGBEncoding;return R;};
   addEventListener('pointermove',e=>{ptr.tx=e.clientX/innerWidth*2-1;ptr.ty=e.clientY/innerHeight*2-1;},{passive:true});
   addEventListener('deviceorientation',e=>{if(e.gamma!=null){ptr.tx=Math.max(-1,Math.min(1,e.gamma/30));ptr.ty=Math.max(-1,Math.min(1,(e.beta-45)/30));}},{passive:true});
@@ -69,6 +72,7 @@
     const hs=HC.map(c=>{const m=new T.Mesh(heart(),jewelMat({transparent:true}));rig.add(m);return{c,m};});
     rig.add(glow,ground,dust,plane);
     const s={R,scene,cam,vis:false,ready:false,
+      drop(){canvas.remove();wrap.classList.remove('gl');R.dispose();},
       size(w){canvas.style.cssText=`left:${-(W-1)/2*w}px;top:${-.6*w}px;width:${W*w}px;height:${H*w}px`;R.setSize(W*w,H*w,false);},
       step(){
         const r=wrap.getBoundingClientRect(),sc=Math.max(-1,Math.min(1,(r.top+r.height/2-innerHeight/2)/innerHeight));
@@ -90,7 +94,8 @@
 
   /* ---------- footer orb ---------- */
   function orb(canvas){
-    const R=renderer(canvas);if(!R){canvas.remove();return;}
+    const R=renderer(canvas),foot=canvas.parentNode;if(!R)return;
+    foot.classList.add('gl'); // swaps the CSS heart for this canvas
     const scene=new T.Scene(),cam=new T.PerspectiveCamera(28,1.125,.1,30);cam.position.z=4.9;
     const g=new T.Group();scene.add(g);
     const h=new T.Mesh(heart(),jewelMat());h.scale.setScalar(1.15);
@@ -103,6 +108,7 @@
     canvas.addEventListener('pointermove',e=>{if(drag!=null){vel+=(e.clientX-drag)*.05;drag=e.clientX;}});
     addEventListener('pointerup',()=>drag=null);
     const s={R,scene,cam,vis:false,ready:true,
+      drop(){foot.classList.remove('gl');R.dispose();},
       size(){R.setSize(canvas.clientWidth,canvas.clientHeight,false);cam.aspect=canvas.clientWidth/canvas.clientHeight;cam.updateProjectionMatrix();},
       step(dt){
         vel+=(.5-vel)*Math.min(1,dt*1.2);spin+=vel*dt;
