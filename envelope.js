@@ -34,19 +34,20 @@ function initEnvelope(canvas){
   // Letter card and wax-seal monogram are text, so they are redrawn once the web fonts arrive.
   const letterC=cv(1024,610,()=>{}),sealC=cv(256,256,()=>{});
   const letterTex=tex(letterC),sealTex=tex(sealC);
+  // Safari has no canvas letterSpacing, so track the letters by hand.
+  const spaced=(g,t,x,y,sp)=>{const c=[...t],ws=c.map(k=>g.measureText(k).width+sp);let cx=x-(ws.reduce((a,b)=>a+b)-sp)/2;g.textAlign='left';c.forEach((k,i)=>{g.fillText(k,cx,y);cx+=ws[i];});g.textAlign='center';};
   function paint(){
     let g=letterC.getContext('2d'),w=1024,h=610;
     g.fillStyle=g.createPattern(paperC,'repeat');g.fillRect(0,0,w,h);
     const gd=g.createLinearGradient(0,0,w,h);[[0,'#a8823a'],[.5,'#ecd391'],[1,'#a8823a']].forEach(([o,c])=>gd.addColorStop(o,c));
     g.strokeStyle=gd;g.lineWidth=5;g.strokeRect(26,26,w-52,h-52);g.lineWidth=1.5;g.strokeRect(42,42,w-84,h-84);
-    g.textAlign='center';g.fillStyle='#9a7429';g.font='600 26px Cinzel,serif';g.letterSpacing='9px';g.fillText('THE WEDDING OF',w/2,150);
-    g.letterSpacing='0px';
+    g.textAlign='center';g.fillStyle='#9a7429';g.font='600 26px Cinzel,serif';spaced(g,'THE WEDDING OF',w/2,150,9);
     const parts=[['Meeran','500 #px "Cormorant Garamond",serif','#0b3d2e',130],['&','#px "Great Vibes",cursive','#b8913f',110],['Amra','500 #px "Cormorant Garamond",serif','#0b3d2e',130]];
     const measure=(m)=>parts.map(([t,f,,z])=>(g.font=f.replace('#',z*m),g.measureText(t).width));
     const m=Math.min(1,(w-190)/(measure(1).reduce((a,b)=>a+b)+44)),ws=measure(m),gap=22*m;
     let x=(w-ws.reduce((a,b)=>a+b)-gap*2)/2;g.textAlign='left';
     parts.forEach(([t,f,c,z],i)=>{g.font=f.replace('#',z*m);g.fillStyle=c;g.fillText(t,x,340);x+=ws[i]+gap;});
-    g.textAlign='center';g.fillStyle='#0b3d2e';g.font='600 30px Cinzel,serif';g.letterSpacing='11px';g.fillText('10 · 01 · 2027',w/2,468);g.letterSpacing='0px';
+    g.textAlign='center';g.fillStyle='#0b3d2e';g.font='600 30px Cinzel,serif';spaced(g,'10 · 01 · 2027',w/2,468,11);
     g.fillStyle=gd;g.fillRect(w/2-190,516,150,2);g.fillRect(w/2+40,516,150,2);
     g.beginPath();g.moveTo(w/2,504);g.lineTo(w/2+12,517);g.lineTo(w/2,530);g.lineTo(w/2-12,517);g.fill();
     letterTex.needsUpdate=true;
