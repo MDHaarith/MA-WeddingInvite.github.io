@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#f8f3eb">
 <meta name="description" content="Meeran & Amra — Wedding Invitation, 10 January 2027">
 <title>Meeran &amp; Amra — Wedding Invitation</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23a65f48'/><text x='50' y='64' font-size='40' text-anchor='middle' fill='%23f9ead9' font-family='Georgia,serif'>M&amp;A</text></svg>">
+<!-- Link preview for WhatsApp / Facebook / Telegram -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Meeran &amp; Amra — Wedding Invitation">
+<meta property="og:description" content="Sunday, 10 January 2027 · 11:00 AM · Drizzle Elite Mahal, Courtallam">
+<meta property="og:url" content="https://mdhaarith.github.io/MA-WeddingInvite.github.io/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -42,7 +49,7 @@ footer{padding:80px 25px;text-align:center;background:var(--cream)}footer h2{max
 </div>
 <div class="progress" id="progress"></div>
 <button class="music" id="music" aria-label="Mute or unmute music">♪</button>
-<audio id="audio" loop preload="none" src="music.mpeg"></audio>
+<audio id="audio" loop preload="none" src="music.mp3"></audio>
 <main id="invitation" hidden>
   <section class="hero" id="home" style="padding:0">
     <img class="hero-photo" src="couple.jpg" alt="Meeran and Amra" onerror="this.style.display='none'">
@@ -79,6 +86,8 @@ footer{padding:80px 25px;text-align:center;background:var(--cream)}footer h2{max
       <p class="address">Courtallam, Tamil Nadu 627805</p>
       
       <a class="map" href="https://www.google.com/maps/search/?api=1&amp;query=Drizzle+Elite+Mahal+Courtallam+Tamil+Nadu" target="_blank" rel="noreferrer"> 📍VIEW LOCATION </a>
+      <br><br>
+      <a class="map" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Meeran+%26+Amra+Wedding&amp;dates=20270110T053000Z/20270110T083000Z&amp;location=Drizzle+Elite+Mahal,+Courtallam,+Tamil+Nadu+627805" target="_blank" rel="noreferrer">📅 ADD TO CALENDAR</a>
     </div>
   </section>
   <footer>
@@ -97,10 +106,13 @@ document.getElementById('open').addEventListener('click', async()=>{
   setTimeout(()=>intro.style.display='none',850);
 });
 music.addEventListener('click',()=>{if(audio.paused){audio.play().then(()=>music.textContent='♪').catch(()=>{});}else{audio.pause();music.textContent='♫';}});
-const target=new Date('2027-01-10T10:00:00+05:30').getTime();
+// Pause music when the tab is hidden (phone lock / app switch); resume on return.
+let wasPlaying=false;
+document.addEventListener('visibilitychange',()=>{if(document.hidden){wasPlaying=!audio.paused;audio.pause();}else if(wasPlaying){audio.play().catch(()=>{});}});
+const target=new Date('2027-01-10T11:00:00+05:30').getTime();
 function tick(){let d=target-Date.now();if(d<0)d=0;document.getElementById('days').textContent=String(Math.floor(d/86400000)).padStart(2,'0');document.getElementById('hours').textContent=String(Math.floor(d%86400000/3600000)).padStart(2,'0');document.getElementById('minutes').textContent=String(Math.floor(d%3600000/60000)).padStart(2,'0');document.getElementById('seconds').textContent=String(Math.floor(d%60000/1000)).padStart(2,'0');if(target-Date.now()<=0)document.getElementById('countNote').textContent='Today begins a beautiful new chapter.';}
 tick();setInterval(tick,1000);
-window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;document.getElementById('progress').style.height=(max>0?scrollY/max*100:0)+'vh';});
+window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;document.getElementById('progress').style.height=(max>0?scrollY/max*100:0)+'vh';},{passive:true});
 </script>
 </body>
 </html>
