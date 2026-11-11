@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: meeran-amra
+    runtime: static
+    staticPublishPath: .
+    headers:
+      - path: /*.webp
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*.mp3
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
