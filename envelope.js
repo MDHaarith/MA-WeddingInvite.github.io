@@ -3,7 +3,8 @@
 function initEnvelope(canvas){
   const T=window.THREE;if(!T)return null;
   let R;
-  try{R=new T.WebGLRenderer({canvas,antialias:true,alpha:true});}catch(e){return null;}
+  // failIfMajorPerformanceCaveat: refuse software-only WebGL, the CSS envelope runs smoother there.
+  try{R=new T.WebGLRenderer({canvas,antialias:true,alpha:true,failIfMajorPerformanceCaveat:true});}catch(e){return null;}
   R.setPixelRatio(Math.min(devicePixelRatio||1,2));
   R.outputEncoding=T.sRGBEncoding;
   const scene=new T.Scene(),cam=new T.PerspectiveCamera(32,1,.1,60);
