@@ -73,9 +73,14 @@ section>h2,footer h2{margin:0;font-weight:400;font-style:italic;font-size:clamp(
 .hero h1 em{font-family:var(--script);font-style:normal;font-weight:400;font-size:.8em;line-height:1.15;padding:0 .2em}
 .couple{position:relative;width:min(150px,46%);margin:4px auto 0}
 .couple img{position:relative;display:block;width:100%;height:auto;filter:drop-shadow(0 10px 10px #0b3d2e33);transform-origin:50% 100%}
+.couple canvas{position:absolute;display:block;pointer-events:none;opacity:0}
+.couple.gl img{opacity:0!important;animation:none!important}
+.couple.gl .halo,.couple.gl .heart,.couple.gl .spark{display:none}
+.orb{display:block;width:180px;height:160px;margin:0 auto 6px;touch-action:pan-y;cursor:grab}
+footer .orb~.sprig{display:none}
 .halo{position:absolute;inset:-6% -24%;border-radius:50%;background:radial-gradient(closest-side,#c9a24b3d,#c9a24b14 58%,transparent 74%)}
 .heart,.spark{position:absolute;color:var(--gold);opacity:0;pointer-events:none}
-.heart{left:50%;top:9%;width:15px;height:15px}
+.heart{left:50%;top:9%;width:15px;height:15px;color:#0e7a56}
 .spark{width:9px;height:9px}
 .hero .sprig{margin:14px auto}
 .invite{max-width:300px;margin:0 auto 18px;font-size:20px;line-height:1.45;color:var(--ink-soft);text-wrap:balance}
@@ -120,6 +125,7 @@ footer .names i{font-family:var(--script);font-style:normal;font-weight:400;padd
   .halo{animation:breathe 4.5s ease-in-out infinite}
   .couple img{opacity:0}
   .couple.in img{animation:enter 1.5s cubic-bezier(.2,.8,.2,1) .25s both,sway 6s ease-in-out 1.8s infinite}
+  .couple.gl.in canvas{animation:enter2 1.4s cubic-bezier(.2,.8,.2,1) .25s both}
   .couple.in .heart{animation:heart 3.8s ease-in infinite;animation-delay:var(--h)}
   .couple.in .spark{animation:twinkle2 2.6s ease-in-out infinite;animation-delay:var(--h)}
   .hint{animation:blink 2.4s ease-in-out infinite}
@@ -134,6 +140,7 @@ footer .names i{font-family:var(--script);font-style:normal;font-weight:400;padd
 @keyframes float{50%{transform:translateY(-8px)}}
 @keyframes breathe{50%{transform:scale(1.1);opacity:.65}}
 @keyframes enter{from{opacity:0;transform:translateY(26px) scale(.86);filter:blur(7px) drop-shadow(0 10px 10px #0b3d2e33)}to{opacity:1;transform:none;filter:blur(0) drop-shadow(0 10px 10px #0b3d2e33)}}
+@keyframes enter2{from{opacity:0;transform:translateY(20px) scale(.88)}to{opacity:1;transform:none}}
 @keyframes sway{50%{transform:translateY(-6px) rotate(1.2deg)}}
 @keyframes heart{0%{opacity:0;transform:translate(-50%,0) scale(.4)}15%{opacity:.9}100%{opacity:0;transform:translate(calc(-50% + var(--x)),-86px) scale(1.2) rotate(var(--r))}}
 @keyframes twinkle2{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1) rotate(45deg)}}
@@ -231,6 +238,7 @@ footer .names i{font-family:var(--script);font-style:normal;font-weight:400;padd
   </section>
 
   <footer>
+    <canvas class="orb reveal" id="orb" aria-hidden="true"></canvas>
     <svg class="sprig reveal" aria-hidden="true"><use href="#sprig"/></svg>
     <p class="eyebrow reveal" style="--d:.1s">With love and gratitude</p>
     <h2 class="reveal" style="--d:.2s">We can't wait to celebrate with you.</h2>
@@ -242,6 +250,7 @@ footer .names i{font-family:var(--script);font-style:normal;font-weight:400;padd
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
 <script src="envelope.js"></script>
+<script src="scenes.js"></script>
 <script>
 const $=id=>document.getElementById(id);
 const intro=$('intro'),invitation=$('invitation'),audio=$('audio'),music=$('music');
