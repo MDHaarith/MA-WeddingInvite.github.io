@@ -36,6 +36,28 @@ main{max-width:760px;margin:auto;box-shadow:0 0 60px #60463210;overflow:hidden}.
 section{text-align:center;padding:90px 22px}.countdown{background:var(--paper)}section h2,footer h2{font-size:clamp(34px,9vw,48px);line-height:1.05;font-weight:400;margin:0 0 32px}.timer{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:440px;margin:35px auto 20px}.cell{padding:18px 3px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.cell strong{display:block;font-size:clamp(25px,7vw,38px);font-weight:500;color:var(--terra)}.cell span{display:block;margin-top:5px;font:8px Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.note{font-size:16px;color:var(--muted)}
 .details{background:#efe3d7}.card{max-width:420px;margin:auto;padding:38px 22px;border:1px solid #d0b5a1;background:#f8f0e7}.flower{color:var(--terra);font-size:26px}.label{color:var(--terra);margin:14px 0;font:10px Arial,sans-serif;letter-spacing:.22em}.card h3{margin:0;font-size:35px;font-weight:400}.rule{width:50px;height:1px;background:var(--terra);margin:22px auto}.event-date{font-size:21px;margin:0 0 5px}.time{margin:0 0 25px;color:var(--muted);font-size:18px}.venue{font-size:25px;margin:0 0 7px}.address{font-size:17px;line-height:1.5;color:var(--muted)}.reception{font-style:italic;font-size:19px;margin:23px 0}.map{display:inline-block;border-bottom:1px solid var(--terra);padding-bottom:5px;text-decoration:none;font:9px Arial,sans-serif;letter-spacing:.15em;color:var(--terra)}
 footer{padding:80px 25px;text-align:center;background:var(--cream)}footer h2{max-width:370px;margin:0 auto 20px}footer .names{font-family:"Great Vibes",cursive;color:var(--terra);font-size:38px;margin:10px 0}.footer-date{font:10px Arial,sans-serif;letter-spacing:.22em;color:var(--muted)}.progress{position:fixed;z-index:5;right:0;top:0;width:3px;height:0;background:var(--terra)}.music{position:fixed;z-index:6;top:14px;right:14px;width:38px;height:38px;border:1px solid #fff8;border-radius:50%;color:white;background:#392b2480;font-size:18px;backdrop-filter:blur(8px);display:none}
+/* Motion: envelope opening, staggered reveals, petals, hover states. */
+.envelope{perspective:800px}.flap{transform-origin:top;transition:transform .8s cubic-bezier(.6,0,.3,1),opacity .8s}
+.screen.opening .flap{transform:rotateX(180deg);opacity:0}
+.screen.opening .seal{transform:translate(-50%,-50%) scale(1.7);opacity:0;transition:transform .5s,opacity .5s}
+.screen.opening .envelope-btn{transform:translateY(-24px) scale(1.06);transition:transform 1s cubic-bezier(.2,.7,.2,1) .3s}
+.kicker,.hint{transition:opacity .4s}.screen.opening .kicker,.screen.opening .hint{opacity:0}
+.cell{overflow:hidden}
+.outline{transition:background .3s,color .3s}.outline:hover{background:#fffaf3;color:var(--ink)}
+.map{transition:letter-spacing .3s}.map:hover{letter-spacing:.22em}
+.petals{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.petal{position:absolute;top:-20px;width:10px;height:14px;border-radius:80% 0 80% 0;background:#f3c9b6;opacity:.65;animation:fall linear infinite}
+@media(prefers-reduced-motion:no-preference){
+.envelope-btn{animation:float 4s ease-in-out infinite}.screen.opening .envelope-btn{animation:none}
+.seal{animation:glow 2.4s ease-in-out infinite}.hint{animation:blink 2.2s ease-in-out infinite}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.reveal.in{opacity:1;transform:none}
+.hero-photo{transform:scale(1.12);transition:transform 9s cubic-bezier(.2,.6,.2,1)}main.show .hero-photo{transform:scale(1)}
+}
+@keyframes float{50%{transform:translateY(-8px)}}
+@keyframes glow{50%{box-shadow:0 0 0 9px #a65f4826,0 3px 8px #56312645}}
+@keyframes blink{50%{opacity:.35}}
+@keyframes fall{to{transform:translate(var(--x),900px) rotate(540deg)}}
 @media(min-width:700px){.hero{height:820px}.copy{padding-bottom:42px}section{padding:110px 50px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -55,31 +77,32 @@ footer{padding:80px 25px;text-align:center;background:var(--cream)}footer h2{max
     <img class="hero-photo" src="couple.jpg" alt="Meeran and Amra" onerror="this.style.display='none'">
     <div class="overlay"></div>
     <div class="hero-frame" aria-hidden="true"></div>
+    <div class="petals" aria-hidden="true"></div>
     <div class="botanical left" aria-hidden="true">❧</div><div class="botanical right" aria-hidden="true">❧</div>
-    <div class="top"><div class="monogram">M <i>&amp;</i> A</div><div class="caps">TOGETHER WITH OUR FAMILIES</div></div>
+    <div class="top reveal" style="--d:.15s"><div class="monogram">M <i>&amp;</i> A</div><div class="caps">TOGETHER WITH OUR FAMILIES</div></div>
     <div class="copy">
-      <p class="eyebrow light">OUR FOREVER BEGINS HERE</p>
-      <h1><span>Meeran</span><em>&amp;</em><span>Amra</span></h1>
-      <div class="ornament">✦</div>
-      <p class="invite">With the blessings of our families, we invite you to celebrate our wedding.</p>
-      <p class="date">SUNDAY · 10 JANUARY 2027 · 11:00 AM</p>
-      <a class="outline" href="#details">THE CELEBRATION</a>
+      <p class="eyebrow light reveal" style="--d:.4s">OUR FOREVER BEGINS HERE</p>
+      <h1 class="reveal" style="--d:.6s"><span>Meeran</span><em>&amp;</em><span>Amra</span></h1>
+      <div class="ornament reveal" style="--d:.85s">✦</div>
+      <p class="invite reveal" style="--d:1s">With the blessings of our families, we invite you to celebrate our wedding.</p>
+      <p class="date reveal" style="--d:1.15s">SUNDAY · 10 JANUARY 2027 · 11:00 AM</p>
+      <a class="outline reveal" style="--d:1.3s" href="#details">THE CELEBRATION</a>
     </div>
-    <div class="bottom">A NEW CHAPTER · A LIFETIME OF LOVE</div>
+    <div class="bottom reveal" style="--d:1.5s">A NEW CHAPTER · A LIFETIME OF LOVE</div>
   </section>
   <section class="countdown" id="countdown">
-    <p class="eyebrow">UNTIL WE SAY “I DO”</p><h2>Counting down to forever</h2>
-    <div class="timer">
+    <p class="eyebrow reveal">UNTIL WE SAY “I DO”</p><h2 class="reveal" style="--d:.15s">Counting down to forever</h2>
+    <div class="timer reveal" style="--d:.3s">
       <div class="cell"><strong id="days">00</strong><span>Days</span></div>
       <div class="cell"><strong id="hours">00</strong><span>Hours</span></div>
       <div class="cell"><strong id="minutes">00</strong><span>Minutes</span></div>
       <div class="cell"><strong id="seconds">00</strong><span>Seconds</span></div>
     </div>
-    <p class="note" id="countNote">10 January 2027 · 11:00 AM IST</p>
+    <p class="note reveal" style="--d:.45s" id="countNote">10 January 2027 · 11:00 AM IST</p>
   </section>
   <section class="details" id="details">
-    <p class="eyebrow">THE WEDDING CELEBRATION</p><h2>A day to remember</h2>
-    <div class="card">
+    <p class="eyebrow reveal">THE WEDDING CELEBRATION</p><h2 class="reveal" style="--d:.15s">A day to remember</h2>
+    <div class="card reveal" style="--d:.3s">
       <div class="flower">✧</div><p class="label">THE WEDDING</p><h3>Meeran &amp; Amra</h3><div class="rule"></div>
       <p class="event-date">Sunday, 10 January 2027</p><p class="time">11:00 AM</p>
       <p class="venue">Drizzle Elite Mahal</p>
@@ -91,26 +114,36 @@ footer{padding:80px 25px;text-align:center;background:var(--cream)}footer h2{max
     </div>
   </section>
   <footer>
-  <div class="flower">✦</div>
-  <p class="eyebrow">WITH LOVE AND GRATITUDE</p>
-  <h2>We can't wait to celebrate with you.</h2>
-  <p class="names"><span class="initial">M</span>eeran &amp; <span class="initial">A</span>mra</p>
-  <span class="footer-date">10 · 01 · 2027</span>
+  <div class="flower reveal">✦</div>
+  <p class="eyebrow reveal" style="--d:.1s">WITH LOVE AND GRATITUDE</p>
+  <h2 class="reveal" style="--d:.25s">We can't wait to celebrate with you.</h2>
+  <p class="names reveal" style="--d:.4s"><span class="initial">M</span>eeran &amp; <span class="initial">A</span>mra</p>
+  <span class="footer-date reveal" style="--d:.55s;display:inline-block">10 · 01 · 2027</span>
 </footer>
 </main>
 <script>
 const intro=document.getElementById('intro'), invitation=document.getElementById('invitation'), audio=document.getElementById('audio'), music=document.getElementById('music');
+const motion=matchMedia('(prefers-reduced-motion: no-preference)').matches;
+function reveal(){
+  invitation.classList.add('show');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.15});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+}
 document.getElementById('open').addEventListener('click', async()=>{
-  intro.classList.add('hide'); invitation.hidden=false; music.style.display='block';
+  intro.classList.add('opening'); invitation.hidden=false; music.style.display='block';
+  // Envelope opens first, then the screen fades while the hero content reveals.
+  setTimeout(()=>{intro.classList.add('hide');reveal();},motion?1100:0);
+  setTimeout(()=>intro.style.display='none',motion?1950:850);
   try { await audio.play(); music.textContent='♪'; } catch(e) { music.textContent='♫'; }
-  setTimeout(()=>intro.style.display='none',850);
-});
+},{once:true});
+if(motion){const box=document.querySelector('.petals');for(let i=0;i<12;i++){const s=document.createElement('span');s.className='petal';s.style.cssText=`left:${Math.random()*100}%;animation-duration:${9+Math.random()*8}s;animation-delay:${-Math.random()*16}s;--x:${Math.random()*120-60}px;scale:${.6+Math.random()*.7}`;box.append(s);}}
 music.addEventListener('click',()=>{if(audio.paused){audio.play().then(()=>music.textContent='♪').catch(()=>{});}else{audio.pause();music.textContent='♫';}});
 // Pause music when the tab is hidden (phone lock / app switch); resume on return.
 let wasPlaying=false;
 document.addEventListener('visibilitychange',()=>{if(document.hidden){wasPlaying=!audio.paused;audio.pause();}else if(wasPlaying){audio.play().catch(()=>{});}});
 const target=new Date('2027-01-10T11:00:00+05:30').getTime();
-function tick(){let d=target-Date.now();if(d<0)d=0;document.getElementById('days').textContent=String(Math.floor(d/86400000)).padStart(2,'0');document.getElementById('hours').textContent=String(Math.floor(d%86400000/3600000)).padStart(2,'0');document.getElementById('minutes').textContent=String(Math.floor(d%3600000/60000)).padStart(2,'0');document.getElementById('seconds').textContent=String(Math.floor(d%60000/1000)).padStart(2,'0');if(target-Date.now()<=0)document.getElementById('countNote').textContent='Today begins a beautiful new chapter.';}
+function set(id,v){const el=document.getElementById(id);v=String(v).padStart(2,'0');if(el.textContent===v)return;el.textContent=v;if(motion)el.animate([{opacity:0,transform:'translateY(-40%)'},{opacity:1,transform:'none'}],{duration:450,easing:'cubic-bezier(.2,.7,.2,1)'});}
+function tick(){let d=target-Date.now();if(d<0)d=0;set('days',Math.floor(d/86400000));set('hours',Math.floor(d%86400000/3600000));set('minutes',Math.floor(d%3600000/60000));set('seconds',Math.floor(d%60000/1000));if(target-Date.now()<=0)document.getElementById('countNote').textContent='Today begins a beautiful new chapter.';}
 tick();setInterval(tick,1000);
 window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;document.getElementById('progress').style.height=(max>0?scrollY/max*100:0)+'vh';},{passive:true});
 </script>
