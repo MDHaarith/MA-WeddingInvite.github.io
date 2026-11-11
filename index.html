@@ -64,7 +64,7 @@ button,a{font:inherit;color:inherit}button{cursor:pointer}
 /* Page layout. */
 main{position:relative;z-index:1;max-width:760px;margin:auto;overflow:clip}
 /* Every block is one full-screen page; the page snaps from one to the next. */
-section,footer{position:relative;text-align:center;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;scroll-snap-align:start;scroll-snap-stop:always;padding:max(56px,env(safe-area-inset-top)) var(--gutter) max(40px,env(safe-area-inset-bottom))}
+section,footer{position:relative;text-align:center;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;scroll-snap-align:start;scroll-snap-stop:always;padding:max(56px,env(safe-area-inset-top)) var(--gutter) max(64px,env(safe-area-inset-bottom))}
 section>*,footer>*{max-width:100%}
 section>h2,footer h2{margin:0;font-weight:400;font-style:italic;font-size:clamp(32px,8.5vw,46px);line-height:1.15;text-wrap:balance}
 
@@ -119,11 +119,16 @@ footer .names i{font-family:var(--script);font-style:normal;font-weight:400;padd
   .hero .sprig{margin:8px auto}.invite{font-size:18px;margin-bottom:12px}.details .paper{margin-top:24px}.orb{height:130px}
 }
 @media(max-height:830px){
-  section,footer{padding-top:max(36px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  section,footer{padding-top:max(36px,env(safe-area-inset-top));padding-bottom:max(52px,env(safe-area-inset-bottom))}
   .hero h1{font-size:clamp(36px,7.6svh,50px);margin-top:8px}.paper{padding-top:20px;padding-bottom:22px}.crest{width:44px;height:44px;margin-bottom:8px}.crest i{font-size:18px}
   .couple{width:min(96px,34%)}.hero .sprig{display:none}.invite{font-size:16px;margin-bottom:8px;line-height:1.35}.when{font-size:12px}.where{margin-bottom:12px;font-size:16px}.btn{padding:12px 22px}
 }
 @media(min-height:900px){.orb{width:min(260px,70vw);height:230px}.timer{margin:56px auto 34px}}
+.swipe{position:fixed;z-index:5;left:0;right:0;bottom:max(12px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:1px;pointer-events:none;font-family:var(--caps);font-size:9px;letter-spacing:.34em;text-indent:.34em;text-transform:uppercase;color:var(--gold-hi);text-shadow:0 1px 6px #021a13;transition:opacity .6s}
+.swipe[hidden]{display:none}.swipe.off{opacity:0}
+.swipe svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+html.mo .swipe{animation:swipein 1s ease 2.4s both}html.mo .swipe svg{animation:nudge 1.7s ease-in-out infinite}
+@keyframes swipein{from{opacity:0}}@keyframes nudge{0%,100%{transform:translateY(-3px);opacity:.5}50%{transform:translateY(4px);opacity:1}}
 .progress{position:fixed;z-index:6;left:0;top:0;width:100%;height:2px;background:var(--foil);transform-origin:left;transform:scaleX(0)}
 .music{position:fixed;z-index:6;top:max(16px,env(safe-area-inset-top));right:16px;width:42px;height:42px;border:1px solid var(--gold);border-radius:50%;background:#062a20cc;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;gap:3px;padding-bottom:13px}
 .music[hidden]{display:none}
@@ -193,6 +198,7 @@ html:not(.mo){scroll-behavior:auto}html:not(.mo) *{transition:none!important;ani
 </div>
 
 <div class="progress" id="progress"></div>
+<div class="swipe" id="swipe" aria-hidden="true" hidden><span>Swipe</span><svg viewBox="0 0 24 24"><path d="M6 8l6 6 6-6"/><path d="M6 13l6 6 6-6"/></svg></div>
 <button class="music" id="music" aria-label="Play or pause music" aria-pressed="false" hidden><i></i><i></i><i></i></button>
 <audio id="audio" loop preload="none" src="music.mp3"></audio>
 
@@ -276,8 +282,9 @@ function reveal(){
 // 3D envelope; null (no WebGL / CDN blocked) falls back to a plain seal button.
 const gl=(()=>{try{return window.initEnvelope&&initEnvelope($('gl'));}catch(e){console.error(e);return null;}})();
 if(!gl)intro.classList.add('nogl');
+new IntersectionObserver(e=>$('swipe').classList.toggle('off',e[0].isIntersecting),{threshold:.5}).observe(document.querySelector('footer')); // nothing left to swipe to
 function enter(){
-  invitation.hidden=false;music.hidden=false;intro.classList.add('hide');reveal();
+  invitation.hidden=false;music.hidden=false;$('swipe').hidden=false;intro.classList.add('hide');reveal();
   setTimeout(()=>{intro.remove();gl&&gl.dispose();},1000);
 }
 $('open').addEventListener('click',()=>{
