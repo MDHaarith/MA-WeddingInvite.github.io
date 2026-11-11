@@ -5,7 +5,7 @@
    Both skip silently (CSS fallback stays) without WebGL or when the visitor prefers reduced motion. */
 (function(){
   const T=window.THREE;
-  if(!T||!matchMedia('(prefers-reduced-motion: no-preference)').matches)return;
+  if(!T||!document.documentElement.classList.contains('mo'))return;
   const TAU=Math.PI*2,k=x=>x<0?0:x>1?1:x,sm=x=>(x=k(x))*x*(3-2*x);
   const fz=/sc=([\d.]+)/.exec(location.hash); // #sc=2 freezes the animation clock, for visual checks
 
